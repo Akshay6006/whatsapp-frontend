@@ -1,6 +1,7 @@
 // src/components/ChatList.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import CONFIG from "../config"; // Import API base from config
 
 export default function ChatList({ onSelectChat, selectedWaId }) {
   const [conversations, setConversations] = useState([]);
@@ -8,22 +9,21 @@ export default function ChatList({ onSelectChat, selectedWaId }) {
   const [newName, setNewName] = useState("");
   const [newWaId, setNewWaId] = useState("");
 
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = CONFIG.API_BASE;
 
   useEffect(() => {
     fetchConversations();
   }, []);
 
   const fetchConversations = async () => {
-  try {
-    const res = await axios.get(`${API_BASE}/conversations`);
-    setConversations(res.data);
-    window.chatListData = res.data; // 👈 Save globally so App.js can access
-  } catch (err) {
-    console.error("Error fetching conversations", err);
-  }
-};
-
+    try {
+      const res = await axios.get(`${API_BASE}/conversations`);
+      setConversations(res.data);
+      window.chatListData = res.data; // Save globally for App.js
+    } catch (err) {
+      console.error("Error fetching conversations", err);
+    }
+  };
 
   const handleNewChat = async () => {
     if (!newName || !newWaId) return alert("Please enter both name and number");

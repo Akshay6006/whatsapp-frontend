@@ -1,146 +1,104 @@
 // src/components/ChatWindow.js
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import CONFIG from "../config"; // Import API base
 
-const API_BASE = "http://localhost:5000";
-
-export default function ChatWindow({ waId, name }) {
+export default function ChatWindow({ selectedWaId }) {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
+  const [newMessage, setNewMessage] = useState("");
+  const messagesEndRef = useRef(null);
 
-  // Fetch messages for selected contact
+  const API_BASE = CONFIG.API_BASE;
+
   useEffect(() => {
-    if (waId) {
+    if (selectedWaId) {
       fetchMessages();
-      const interval = setInterval(fetchMessages, 3000); // auto-refresh
-      return () => clearInterval(interval);
     }
-  }, [waId]);
+  }, [selectedWaId]);
 
   const fetchMessages = async () => {
-    if (!waId) return;
     try {
-      const res = await axios.get(`${API_BASE}/messages/${waId}`);
+      const res = await axios.get(`${API_BASE}/messages/${selectedWaId}`);
       setMessages(res.data);
+      scrollToBottom();
     } catch (err) {
       console.error("Error fetching messages", err);
     }
   };
 
-  // Send outgoing message
   const sendMessage = async () => {
-    if (!input.trim() || !waId) return;
+    if (!newMessage.trim()) return;
     try {
-      await axios.post(`${API_BASE}/send`, {
-        wa_id: waId,
-        name: "You",
-        message: input,
+      await axios.post(`${API_BASE}/send-message`, {
+        wa_id: selectedWaId,
+        text: newMessage,
       });
-      setInput("");
+      setNewMessage("");
       fetchMessages();
     } catch (err) {
       console.error("Error sending message", err);
     }
   };
 
-  // Quick reply (simulate incoming)
-  const quickReply = async () => {
-    try {
-      await axios.post(`${API_BASE}/webhook`, {
-        wa_id: waId,
-        name: name || "Unknown",
-        message: "This is a quick reply! ✅",
-        direction: "in",
-      });
-      fetchMessages();
-    } catch (err) {
-      console.error("Error sending quick reply", err);
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  if (!waId) {
-    return (
-      <div style={{ color: "#fff", textAlign: "center", marginTop: "20px" }}>
-        Select a chat to start messaging
-      </div>
-    );
-  }
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Chat header */}
-      <div style={{ padding: "10px", backgroundColor: "#202c33", color: "#fff" }}>
-        <strong>{name}</strong>
-      </div>
-
-      {/* Chat messages */}
-      <div style={{ flex: 1, padding: "10px", overflowY: "auto", backgroundColor: "#111b21" }}>
-        {messages.map((msg) => (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", backgroundColor: "#0b141a", color: "white" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "10px" }}>
+        {messages.map((msg, idx) => (
           <div
-            key={msg._id}
+            key={idx}
             style={{
-              textAlign: msg.direction === "out" ? "right" : "left",
-              marginBottom: "8px",
+              textAlign: msg.fromMe ? "right" : "left",
+              marginBottom: "10px",
             }}
           >
             <span
               style={{
                 display: "inline-block",
+                backgroundColor: msg.fromMe ? "#005c4b" : "#202c33",
                 padding: "8px 12px",
-                borderRadius: "8px",
-                backgroundColor: msg.direction === "out" ? "#005c4b" : "#202c33",
-                color: "#fff",
+                borderRadius: "7px",
+                maxWidth: "70%",
+                wordWrap: "break-word",
               }}
             >
-              {msg.message}
+              {msg.text}
             </span>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Typing box */}
-      <div style={{ display: "flex", padding: "10px", backgroundColor: "#202c33" }}>
+      <div style={{ display: "flex", padding: "10px", borderTop: "1px solid #2a2f32" }}>
         <input
+          type="text"
+          placeholder="Type a message"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
           style={{
             flex: 1,
             padding: "10px",
-            borderRadius: "5px",
+            borderRadius: "20px",
             border: "none",
             outline: "none",
-            backgroundColor: "#2a3942",
-            color: "#fff",
+            marginRight: "10px",
           }}
-          placeholder="Type a message"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
         />
         <button
           onClick={sendMessage}
           style={{
-            marginLeft: "8px",
-            padding: "10px 15px",
             backgroundColor: "#00a884",
-            color: "#fff",
             border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Send
-        </button>
-        <button
-          onClick={quickReply}
-          style={{
-            marginLeft: "8px",
             padding: "10px 15px",
-            backgroundColor: "#ff9800",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
+            borderRadius: "50%",
             cursor: "pointer",
+            color: "white",
           }}
         >
-          Quick Reply
+          ➤
         </button>
       </div>
     </div>
