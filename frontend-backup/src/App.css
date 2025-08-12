@@ -1,0 +1,57 @@
+/* Dark-mode WhatsApp-like styles */
+:root{
+  --bg:#0b1417;
+  --panel:#111718;
+  --muted:#9aa3a6;
+  --accent:#128C7E;
+  --bubble-in:#121416;
+  --bubble-out:#056162;
+}
+
+*{box-sizing:border-box;font-family: "Segoe UI", Roboto, Arial, sans-serif;color:#e6f0f0}
+html,body,#root{height:100%;margin:0;background:var(--bg)}
+
+.app-dark{display:flex;height:100vh;}
+
+/* Left panel (sidebar) */
+.left-panel{width:320px;background:linear-gradient(180deg,var(--panel),#0b2222);display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,0.03)}
+.nav{padding:12px 12px 8px 12px}
+.app-title{font-weight:700;font-size:16px;color:#fff;padding:8px 0}
+.nav-tabs{display:flex;gap:6px;padding:8px 0}
+.tab{flex:1;padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
+.tab.active{background:rgba(255,255,255,0.03);color:#fff;border-color:rgba(255,255,255,0.06)}
+.chat-list{flex:1;overflow-y:auto;padding:6px}
+
+/* Chat item */
+.chat-item{display:flex;align-items:center;padding:12px;border-radius:8px;margin:6px 4px;cursor:pointer;transition:background .12s}
+.chat-item:hover{background:rgba(255,255,255,0.02)}
+.chat-item.selected{background:rgba(255,255,255,0.03)}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;margin-right:12px;color:#fff}
+.info{flex:1;overflow:hidden}
+.name{font-weight:600;color:#fff}
+.preview{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.time{color:var(--muted);font-size:12px;margin-left:8px;white-space:nowrap}
+
+/* Right panel (chat area) */
+.right-panel{flex:1;display:flex;flex-direction:column;background:#0c1616}
+.chat-header{padding:14px;border-bottom:1px solid rgba(255,255,255,0.03);font-weight:600;color:#fff}
+.chat-window-wrapper{display:flex;flex-direction:column;height:100%}
+.chat-window{flex:1;padding:20px;overflow-y:auto;background-image: radial-gradient(circle at 10% 10%, rgba(255,255,255,0.015), transparent 10%), linear-gradient(180deg, rgba(0,0,0,0.02) 0%, transparent 40%);}
+
+/* Bubbles */
+.bubble{max-width:70%;padding:10px;border-radius:10px;margin:8px 0;display:inline-block}
+.bubble.in{background:rgba(255,255,255,0.03);align-self:flex-start;color:#e6f0f0;border:1px solid rgba(255,255,255,0.03)}
+.bubble.out{background:linear-gradient(180deg,var(--bubble-out),#128C7E);align-self:flex-end;color:#fff}
+.bubble-text{white-space:pre-wrap}
+.bubble-meta{font-size:11px;color:rgba(255,255,255,0.6);margin-top:6px;text-align:right}
+.status{margin-left:6px;color:rgba(255,255,255,0.8)}
+
+/* Composer */
+.chat-composer{display:flex;padding:12px;border-top:1px solid rgba(255,255,255,0.03);gap:8px;background:linear-gradient(180deg,transparent, rgba(0,0,0,0.08))}
+.chat-composer input{flex:1;padding:10px 14px;border-radius:24px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff;outline:none}
+.chat-composer button{background:var(--accent);border:none;padding:10px 16px;border-radius:20px;color:#fff;cursor:pointer;font-weight:600}
+
+/* placeholders */
+.select-placeholder, .placeholder{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px;height:100%}
+.small-muted{padding:8px;color:var(--muted);font-size:13px}
+.empty-muted{color:var(--muted);text-align:center;margin-top:30px}
